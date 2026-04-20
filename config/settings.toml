@@ -1,0 +1,16 @@
+[network]
+# Drone (Raspberry Pi) central server
+drone_host = "0.0.0.0"
+drone_port = 8888
+max_devices = 5
+
+# Device connection settings
+device_connect_addr = "192.168.1.100:8888"  # Drone's IP
+
+[crypto]
+kyber_parameter = "kyber512"
+dilithium_parameter = "dilithium2"
+
+[device]
+max_message_size = 4096
+heartbeat_interval_sec = 30

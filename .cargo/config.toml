@@ -1,0 +1,7 @@
+[build]
+# Give rust-analyzer its own target directory so it never conflicts
+# with manual `cargo run` / `cargo build` invocations.
+# rust-analyzer reads this and uses target-ra/ automatically.
+
+[env]
+CARGO_TARGET_DIR = "target"
