@@ -58,7 +58,7 @@ def start_mesh():
     print("🚁 UNIVERSAL DYNAMIC MESH CONTROLLER")
     print("="*60)
     print(f"📍 Network Host: {primary_ip}")
-    print(f"🛰️ Local URL:    http://drone-mesh.local:8181")
+    print(f"🛰️ Local URL:    http://drone-mesh.local:8080")
     print("="*60)
 
     # Start Unified Gateway
@@ -70,13 +70,13 @@ def start_mesh():
     print("\n✅ SECURE DYNAMIC MESH IS LIVE!")
     print("-" * 40)
     print(f"🌐 ACCESS ANYWHERE (Same Wi-Fi):")
-    print(f"   URL:  http://drone-mesh.local:8181")
+    print(f"   URL:  http://drone-mesh.local:8080")
     for ip in active_ips:
-        print(f"   (Or:  http://{ip}:8181)")
+        print(f"   (Or:  http://{ip}:8080)")
     print("-" * 40)
     print(f"🌍 GLOBAL TUNNEL (Any Network):")
     print(f"   Run this in a NEW terminal for global 5G/LTE access:")
-    print(f"   Command: npx localtunnel --port 8181")
+    print(f"   Command: npx localtunnel --port 8080")
     print("-" * 40)
     print("\nPress Ctrl+C to shut down the mesh.")
 

@@ -131,7 +131,7 @@ def setup_app(app):
 async def main():
     parser = argparse.ArgumentParser(description="Unified Drone Mesh Gateway")
     parser.add_argument("--password", default="drone123", help="Mesh Passkey")
-    parser.add_argument("--port", type=int, default=8181, help="Gateway port (default: 8181)")
+    parser.add_argument("--port", type=int, default=8080, help="Gateway port (default: 8080)")
     args = parser.parse_args()
     
     global PASSKEY
