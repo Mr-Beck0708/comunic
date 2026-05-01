@@ -357,10 +357,10 @@ function handleIncomingMessage(raw) {
                 if (isValid) {
                     text = kyber.decrypt_message(encrypted, myKyberSec);
                 } else {
-                    text = '[Failing Signature Verification]';
+                    text = '[⚠️ Cryptographic Signature Mismatch]';
                 }
             } else {
-                text = hexDecode(msg.payload);
+                text = '[🔐 Encrypted - Waiting for Peer Keys...]';
             }
         } catch (e) {
             text = '[Decryption failed: ' + e + ']';

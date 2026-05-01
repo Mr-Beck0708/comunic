@@ -143,6 +143,8 @@ class ClientDevice:
                             print(f"\n🔐 📨 [Encrypted by {self.peers[sender]['name']}] {sender}: {decrypted}")
                         else:
                             print(f"\n🚨 [WARNING] Forged signature from {sender} detected!")
+                    else:
+                        print(f"\n🔐 📨 [Encrypted message from {sender}] - Waiting for Peer Keys...")
                             
                 elif msg_type == "KeyExchange":
                     sender = msg.get("sender")

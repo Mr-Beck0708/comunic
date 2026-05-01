@@ -24,28 +24,33 @@ if sys.stdout.encoding.lower() != 'utf-8':
         import codecs
         sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
 
-def get_all_ips():
-    ips = []
+def get_primary_ip():
+    """Get the primary IP address used for internet/network access."""
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        # Get all network interfaces
+        # Doesn't need to be reachable, just triggers the routing table lookup
+        s.connect(('10.255.255.255', 1))
+        IP = s.getsockname()[0]
+    except Exception:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP
+
+def get_all_ips():
+    primary = get_primary_ip()
+    ips = [primary] if primary != "127.0.0.1" else []
+    
+    try:
+        # Get all network interfaces for fallback
         import subprocess
         output = subprocess.check_output("ipconfig", shell=True).decode()
         import re
-        # Find all IPv4 addresses
         matches = re.findall(r"IPv4 Address\. . . . . . . . . . . : ([\d\.]+)", output)
-        ips = [ip for ip in matches if ip != "127.0.0.1"]
-    except Exception:
-        pass
-    
-    # Fallback/Fallback method
-    try:
-        hostname = socket.gethostname()
-        addr_infos = socket.getaddrinfo(hostname, None)
-        for info in addr_infos:
-            ip = info[4][0]
-            if "." in ip and ip != "127.0.0.1" and ip not in ips:
+        for ip in matches:
+            if ip != "127.0.0.1" and ip not in ips:
                 ips.append(ip)
-    except:
+    except Exception:
         pass
         
     return ips if ips else ["127.0.0.1"]
@@ -57,8 +62,9 @@ def start_mesh():
     print("\n" + "="*60)
     print("🚁 UNIVERSAL DYNAMIC MESH CONTROLLER")
     print("="*60)
-    print(f"📍 Network Host: {primary_ip}")
-    print(f"🛰️ Local URL:    http://drone-mesh.local:8080")
+    print(f"🚀 PRIMARY IP:   {primary_ip}")
+    print(f"🔗 DASHBOARD:    http://{primary_ip}:8080")
+    print(f"🛰️ mDNS:         http://drone-mesh.local:8080")
     print("="*60)
 
     # Start Unified Gateway

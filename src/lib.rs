@@ -23,7 +23,7 @@ use pyo3::prelude::*;
 
 #[cfg(feature = "python")]
 #[pymodule]
-fn drone_crypto(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
+fn drone_crypto(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<python_api::PyKyberKem>()?;
     m.add_class::<python_api::PyDilithiumSignature>()?;
     Ok(())

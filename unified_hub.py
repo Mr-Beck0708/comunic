@@ -19,7 +19,7 @@ if sys.stdout.encoding.lower() != 'utf-8':
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
 
 # --- State ---
-clients = {}            # {client_id: {"ws": ws, "name": name, "ip": ip}}
+clients = {}            # {client_id: {"ws": ws, "name": name, "ip": ip, "keys": None}}
 FAILED_ATTEMPTS = {}    # {ip: count}
 PASSKEY = "drone123"
 
@@ -82,11 +82,20 @@ async def websocket_handler(request):
                     # Send device list
                     device_list = [[cid, {"name": c["name"]}] for cid, c in clients.items()]
                     await ws.send_json({"msg_type": "DeviceList", "payload": json.dumps(device_list).encode().hex()})
+                    
+                    # Send existing keys to the new client
+                    for cid, c in clients.items():
+                        if cid != client_id and c.get("keys"):
+                            await ws.send_str(c["keys"])
 
                 # --- B. Key Exchange & Routing ---
                 elif m_type == "KeyExchange":
                     target = data.get("receiver")
                     if target == "drone": # Broadcast the keys to everyone else
+                        # Cache the keys for this client
+                        if client_id in clients:
+                            clients[client_id]["keys"] = msg.data
+                            
                         for cid, c in clients.items():
                             if cid != client_id:
                                 await c["ws"].send_str(msg.data)

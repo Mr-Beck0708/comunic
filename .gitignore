@@ -28,3 +28,5 @@ config/*.json
 # Temporary files
 *.tmp
 *.log
+
+.env

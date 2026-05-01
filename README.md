@@ -100,5 +100,17 @@ python serve.py
 
 ---
 
+## 🔧 Permanent Environment Fix
+If you encounter "Module Not Found" errors or IDE markers, run the automated setup script:
+```powershell
+.\setup_mesh.ps1
+```
+This will:
+1. Re-synchronize the `.venv`
+2. Build the Rust `drone_crypto` module specifically for your system.
+3. Update IDE settings to point to the correct interpreter.
+
+---
+
 ### **"Efinal Read" - Project Baseline v1.0.0**
 *Securing the skies with the math of tomorrow.*
