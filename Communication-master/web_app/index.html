@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Drone Mesh • Secure Comms</title>
+    <meta name="description" content="Post-Quantum Secure Drone Mesh Communication System - Browser Client">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+
+    <!-- Connection Screen -->
+    <div id="connect-screen" class="screen active">
+        <div class="connect-card glass-panel">
+            <div class="logo-container">
+                <div class="logo-ring">
+                    <div class="logo-ring-inner"></div>
+                    <svg class="logo-icon" viewBox="0 0 64 64" fill="none">
+                        <path d="M32 8L8 24v16l24 16 24-16V24L32 8z" stroke="currentColor" stroke-width="2" fill="none" opacity="0.3"/>
+                        <path d="M32 16L16 28v8l16 11 16-11v-8L32 16z" stroke="currentColor" stroke-width="2" fill="none" opacity="0.6"/>
+                        <circle cx="32" cy="32" r="6" fill="currentColor" opacity="0.9"/>
+                        <circle cx="32" cy="32" r="3" fill="var(--bg-dark)"/>
+                    </svg>
+                </div>
+                <h1 class="logo-title">DRONE MESH</h1>
+                <p class="logo-subtitle">Post-Quantum Secure Communication</p>
+            </div>
+
+            <div class="form-group">
+                <label for="device-name">Device Name</label>
+                <input type="text" id="device-name" placeholder="e.g. My Phone" autocomplete="off" spellcheck="false">
+            </div>
+
+            <div class="form-group">
+                <label for="drone-addr">Drone Address</label>
+                <input type="text" id="drone-addr" value="192.168.1.4:8888" placeholder="IP:PORT" autocomplete="off" spellcheck="false">
+            </div>
+            
+            <div class="form-group">
+                <label for="mesh-passkey">Mesh Passkey</label>
+                <input type="password" id="mesh-passkey" placeholder="Enter Hub Password" autocomplete="off" spellcheck="false">
+            </div>
+
+            <button id="connect-btn" class="btn-primary" onclick="connectToDrone()">
+                <span class="btn-text">Connect to Mesh</span>
+                <span class="btn-loader" style="display:none;"></span>
+            </button>
+
+            <div id="connect-error" class="error-msg" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Chat Screen -->
+    <div id="chat-screen" class="screen">
+        <!-- Header -->
+        <header class="chat-header glass-panel">
+            <div class="header-left">
+                <button class="hamburger" id="sidebar-toggle" onclick="toggleSidebar()">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="header-info">
+                    <h2 class="header-title">Drone Mesh</h2>
+                    <div class="connection-status" id="conn-status">
+                        <span class="status-dot connected"></span>
+                        <span class="status-text" id="status-text">Connected</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="device-count" id="device-count-badge">
+                    <span id="device-count-num">0</span>
+                    <span>online</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar / Mission Control -->
+        <aside class="sidebar glass-panel" id="sidebar">
+            <div class="sidebar-header">
+                <h3>Mission Control</h3>
+                <button class="close-sidebar" onclick="toggleSidebar()">✕</button>
+            </div>
+            
+            <div class="sidebar-content">
+                <!-- Section: My Identity -->
+                <div class="sidebar-section">
+                    <div class="section-label">My Quantum Identity</div>
+                    <div class="identity-card glass-panel">
+                        <div class="id-row">
+                            <span class="id-key">Device ID</span>
+                            <span class="id-val mono" id="stat-my-id">---</span>
+                        </div>
+                        <div class="id-row">
+                            <span class="id-key">Kyber Pub</span>
+                            <button class="id-copy" onclick="copyKey('kyber')">Copy</button>
+                        </div>
+                        <div class="id-row">
+                            <span class="id-key">Dilithium Pub</span>
+                            <button class="id-copy" onclick="copyKey('dilithium')">Copy</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Mesh Network -->
+                <div class="sidebar-section">
+                    <div class="section-label">Active Mesh Nodes</div>
+                    <div class="device-list" id="device-list">
+                        <div class="empty-devices">
+                            <p>No other devices connected</p>
+                            <span class="empty-hint">Waiting for mesh peers...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Diagnostics -->
+                <div class="sidebar-section">
+                    <div class="section-label">Live Diagnostics</div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Latency</span>
+                            <span class="stat-value highlight" id="stat-latency">-- ms</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Uptime</span>
+                            <span class="stat-value" id="stat-uptime">00:00</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Server</span>
+                            <span class="stat-value" id="stat-server">192.168.1.4</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: System Tools -->
+                <div class="sidebar-section">
+                    <div class="section-label">System Tools</div>
+                    <div class="tools-grid">
+                        <button class="tool-btn" onclick="clearChat()">
+                            <span class="tool-icon">🗑️</span>
+                            <span>Clear Chat</span>
+                        </button>
+                        <button class="tool-btn" onclick="toggleAutoScroll()">
+                            <span class="tool-icon">📜</span>
+                            <span id="scroll-toggle-text">Scroll: ON</span>
+                        </button>
+                        <button class="tool-btn" id="ciphertext-btn" onclick="toggleCiphertext()">
+                            <span class="tool-icon">🔐</span>
+                            <span id="ciphertext-toggle-text">Ciphertext: OFF</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="my-device-info">
+                    <span class="my-device-dot"></span>
+                    <span id="my-device-label">My Device</span>
+                </div>
+                <button class="btn-disconnect" onclick="disconnect()">Disconnect</button>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <!-- Chat Area -->
+        <main class="chat-area" id="chat-area">
+            <div class="chat-target-bar glass-panel" id="target-bar">
+                <span class="target-label">Sending to:</span>
+                <span class="target-name" id="target-name">Everyone (Broadcast)</span>
+                <button class="target-clear" id="target-clear" onclick="clearTarget()" style="display:none;">✕</button>
+            </div>
+
+            <div class="messages-container" id="messages-container">
+                <div class="welcome-message" id="welcome-msg">
+                    <div class="welcome-icon">🛡️</div>
+                    <h3>Secure Channel Active</h3>
+                    <p>Messages in this mesh are encrypted end-to-end.</p>
+                    <p class="welcome-hint">Select a device from the sidebar or broadcast to all.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Input Area -->
+        <div class="input-area glass-panel">
+            <div class="input-wrapper">
+                <input type="text" id="msg-input" placeholder="Type a secure message..." autocomplete="off" spellcheck="false" onkeydown="handleInputKey(event)">
+                <button class="send-btn" id="send-btn" onclick="sendMessage()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>

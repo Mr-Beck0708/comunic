@@ -1,0 +1,30 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.whl
+
+# Rust / Cargo
+/target/
+/target_run/
+/target_tmp/
+/target_tmp2/
+Cargo.lock
+
+# WASM
+web_app/pkg/
+
+# Security & Data
+keys/
+config/*.json
+!config/default.json
+
+# IDEs
+.vscode/
+.idea/
+.DS_Store
+
+# Temporary files
+*.tmp
+*.log
